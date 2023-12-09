@@ -17,7 +17,7 @@ public:
 	//destructorul clasei
 	~ingredient()
 	{
-		delete denumireIngrediente;
+		delete []denumireIngrediente;
 		delete cantitatea_disponibila;
 	}
 
@@ -32,6 +32,18 @@ public:
 	}
 	ingredient() : denumireIngrediente(nullptr), cantitatea_disponibila(nullptr)
 	{}
+	void afisare()
+	{
+		cout << "Denumire ingrediente";
+		if(denumireIngrediente!=nullptr)
+		{
+			for (int i = 0;i<3;i++)
+			{
+				cout << denumireIngrediente[i] << ' ';
+			}
+		}
+
+	}
 };
 
 //a doua clasa
@@ -133,8 +145,10 @@ public:
 
 int main()
 {
-	ingredient clatiteing(( "oua", "lapte", "faina" ), ( 30.0, 100.0, 25.0 ), 3);
+	 string denumireIngrediente[] = {"oua", "lapte", "faina"};
+	 float cantitatea_disponibila[] = {30.00, 100, 25};
+	ingredient clatiteing(denumireIngrediente, cantitatea_disponibila, 3);
 	//preparat clatite("clatitee", ("oua", "lapte", "faina"), (12, 23, 10), 3);
-	//clatite.afis();
+	clatiteing.afis();
 	return 0;
 }
