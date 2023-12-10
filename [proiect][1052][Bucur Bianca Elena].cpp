@@ -1,154 +1,134 @@
-// [proiect][1052][Bucur Bianca Elena].cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <string>
-#include <string.h>
+#include <vector>
 
 using namespace std;
+
+
 //prima clasa
-class ingredient
+class Ingredient
 {
-	const string* denumireIngrediente;
-	float* cantitatea_disponibila;
+    string* nume;
+    float* cantitate;
 
 public:
+    //constructor de copiere
+    Ingredient(const Ingredient& other)
+        : nume(new string(*other.nume)), cantitate(new float(*other.cantitate)) {}
 
-	//destructorul clasei
-	~ingredient()
-	{
-		delete []denumireIngrediente;
-		delete cantitatea_disponibila;
-	}
+    //constructor cu toti param
+    Ingredient(const  string& nume, float cantitate)
+        : nume(new  string(nume)), cantitate(new float(cantitate)) {}
 
-	//constructor
-	ingredient(const string* denumireIngrediente, float* cantitatea_disponibila,int nrIng) 
-	{
-		this->denumireIngrediente = new string[nrIng];
-		this->denumireIngrediente = denumireIngrediente;
-	this->cantitatea_disponibila = cantitatea_disponibila;
-
-	
-	}
-	ingredient() : denumireIngrediente(nullptr), cantitatea_disponibila(nullptr)
-	{}
-	void afisare()
-	{
-		cout << "Denumire ingrediente";
-		if(denumireIngrediente!=nullptr)
-		{
-			for (int i = 0;i<3;i++)
-			{
-				cout << denumireIngrediente[i] << ' ';
-			}
-		}
-
-	}
+    //destructor
+    ~Ingredient()
+    {
+        delete nume;
+        delete cantitate;
+    }
+    //supraincarcare >>
+    friend istream& operator >> (istream& in, Ingredient& ingredient)
+    {
+        cout << "Nume ingredient: ";
+        in >> *ingredient.nume;
+        cout << "Cantitate: ";
+        in >> *ingredient.cantitate;
+        return in;
+    }
+    //supraincarcare <<
+    friend  ostream& operator << (ostream& out, Ingredient& ingredient) {
+        out << "Nume ingredient: " << *ingredient.nume << endl;
+        out << "Cantitate: " << *ingredient.cantitate << endl;
+        return out;
+    }
+    //accesor set + get
+    void setAdaugCantitate( float cantitate)
+    {
+        if (this->cantitate != 0)
+            this->cantitate = cantitate;
+    }
+    float * getCantitateNoua()
+    {
+        return cantitate;
+    }
 };
-
 //a doua clasa
-class preparat
+class Preparat
 {
-	string denumire_preparat;
-	static int numar_ordine_preparat;
-	//int numar_ingrediente;
-	ingredient** lista_ingrediente;
-	float* cantitatile_necesare;
+    string denumire;
+    int numar_ordine;
+    vector<Ingredient> ingredients;
 public:
-	//destructorul clasei
-	~preparat()
-	{
-		//delete denumire_preparat;
-		delete[] lista_ingrediente;
-		delete cantitatile_necesare;
-	}
+    //constructor de copiere
+    Preparat(const Preparat& other)
+    {
+        this->denumire = other.denumire;
+        this->numar_ordine = other.numar_ordine;
+        this->ingredients = other.ingredients;
+    }
+    //destructor
+    ~Preparat() {}
+    //constructor cu toti param
+    Preparat(string denumire, int numar_ordine, vector<Ingredient>ingredients)
+    {
+        this->denumire = denumire;
+        this->numar_ordine = numar_ordine;
+        this->ingredients = ingredients;
+    }
+    //supraincarcare cu >>
+    friend istream& operator >>(istream& in, Preparat& preparat)
+    {
+        cout << "Denumirea preparatului: ";
+        in >> preparat.denumire;
+        cout << "Numarul de ordine al preparatului: ";
+        in >> preparat.numar_ordine;
+        return in;
+        
 
-	//constructor 
-	preparat() :denumire_preparat(nullptr), lista_ingrediente(nullptr), cantitatile_necesare(nullptr) {}
-	preparat(const string& denumire_preparat, ingredient** lista_ingrediente, float cantitatile_necesare, int numar_ingrediente) {
-		this->denumire_preparat = denumire_preparat;
-		if(numar_ingrediente>0 && lista_ingrediente!=nullptr)
-		{
-			this->lista_ingrediente = new ingredient*[numar_ingrediente];
-			for (int i = 0; i < numar_ingrediente; i++)
-				this->lista_ingrediente[i] = new ingredient(*lista_ingrediente[i]);
-		}
-		
-
-		/*cout << "numele preparatului :" << *denumire_preparat << "\n ingredientele sale:";
-		if (lista_ingrediente != nullptr)
-			cout << (lista_ingrediente[1].denumireIngredient) << " ";
-		*/
-	}
+    }
+    //supraincarcare<<
+    friend  ostream& operator << (ostream& out, Preparat& preparat) {
+        out << "Denumire Preparat: " << preparat.denumire << endl;
+        out << "Numar de ordine Preparat: " << preparat.numar_ordine << endl;
+        return out;
+    }
+   
 };
-int preparat::numar_ordine_preparat = 1;
-
-//a treia clasa
-class meniu
-{
-	preparat* denumirile_preparatelor;
-	int numar_preparate_disponibile;
-public:
-	//destructorul clasei
-	~meniu()
-	{
-		delete[] denumirile_preparatelor;
-	}
-	//constructor
-	meniu(preparat*denumirile_preparatelor,int numar_preparate_disponibile)
-	{
-		this->denumirile_preparatelor = denumirile_preparatelor;
-		this->numar_preparate_disponibile = numar_preparate_disponibile;
-	}
-
-};
-
-//a patra clasa
-class comanda
-{
-	char* lista_produse_comandate;
-	int numar_preparate_comandate;
-public:
-	//destructorul clasei
-	~comanda()
-	{
-		delete[] lista_produse_comandate;
-	}
-	comanda(char* lista_produse_comandate, int numar_preparate_comandate)
-	{
-		strcpy(this->lista_produse_comandate, lista_produse_comandate);
-		this->numar_preparate_comandate = numar_preparate_comandate;
-	}
-
-};
-
-//a cincea clasa
-class ospatar
-{
-	char* nume_ospatar = nullptr;
-	int* id_comenzi = { 0 };
-public:
-	//destructorul clasei
-	~ospatar()
-	{
-		
-		delete id_comenzi;
-	}
-	ospatar	(){}
-	ospatar( char* nume_ospatar, int * id_comenzi)
-	{
-		strcpy(this->nume_ospatar, nume_ospatar);
-		id_comenzi = nullptr;
-	}
-};
-
-
 int main()
 {
-	 string denumireIngrediente[] = {"oua", "lapte", "faina"};
-	 float cantitatea_disponibila[] = {30.00, 100, 25};
-	ingredient clatiteing(denumireIngrediente, cantitatea_disponibila, 3);
-	//preparat clatite("clatitee", ("oua", "lapte", "faina"), (12, 23, 10), 3);
-	clatiteing.afis();
-	return 0;
+    Ingredient ingredient("Faina", 100);
+     vector<Ingredient> ingredients;
+    ingredients = {
+            Ingredient("Faina", 100),
+            Ingredient("Zahar", 200),
+            Ingredient("Sare", 50),
+            Ingredient("Ulei", 150),
+            Ingredient("Lapte", 300)
+    };
+    vector<Ingredient> Ingrediente_oua;
+    Ingrediente_oua = 
+    {
+        Ingredient("oua",3) ,
+        Ingredient("ulei",5),
+        Ingredient("sare",0.2)
+    };
+    for (Ingredient i : ingredients) {
+        cout << i;
+        cout << endl;
+    }
+    Preparat preparat("Clatite", 12, ingredients);
+    vector<Preparat>preparate;
+    preparate =
+    {
+        Preparat("clatite",12,ingredients),
+        Preparat("oua",2,Ingrediente_oua)
+    };
+    for (Preparat i : preparate)
+    {
+        cout << i << endl;
+    }
+    float a = 250;
+    ingredient.setAdaugCantitate(&a);
+    ingredient.getCantitateNoua();
+    return 0;
 }
